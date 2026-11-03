@@ -1,88 +1,182 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="KaamEasy offers free online tools for images, PDFs and everyday calculations.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KaamEasy - Free online tools for images, PDF and calculations">
 <title>KaamEasy - Free Online Tools</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f7f9fc;color:#172033}
-header{background:#fff;padding:18px 6%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee}
-.logo{font-size:26px;font-weight:bold;color:#2563eb}
-.logo span{color:#172033}
-nav a{margin-left:18px;text-decoration:none;color:#333;font-size:14px}
-.hero{text-align:center;padding:75px 18px;background:linear-gradient(135deg,#eaf1ff,#fff)}
-.hero h1{font-size:38px;margin-bottom:15px}
-.hero h1 span{color:#2563eb}
-.hero p{color:#64748b;font-size:17px;line-height:1.7}
-.search{margin:25px auto;padding:14px;width:90%;max-width:450px;border:1px solid #ddd;border-radius:10px;font-size:16px}
-.container{max-width:1100px;margin:auto;padding:45px 18px}
-.container h2{text-align:center;font-size:27px;margin-bottom:10px}
-.sub{text-align:center;color:#64748b;margin-bottom:30px}
-.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
-.tool{background:white;padding:24px;border:1px solid #e5eaf2;border-radius:14px;transition:.2s}
-.tool:hover{transform:translateY(-4px);box-shadow:0 8px 25px #0000000d}
-.tool .icon{font-size:32px;margin-bottom:15px}
-.tool h3{margin-bottom:9px}
-.tool p{color:#64748b;font-size:14px;line-height:1.6}
-.tool a{display:inline-block;margin-top:15px;color:#2563eb;text-decoration:none;font-weight:bold}
-footer{text-align:center;padding:30px;background:#172033;color:white}
-footer p{margin:8px}
-@media(max-width:600px){.hero h1{font-size:29px}nav a{margin-left:8px;font-size:12px}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:linear-gradient(120deg,#102b59,#1769d2);color:white;padding:25px 16px;text-align:center}
+header h1{font-size:32px;margin:0 0 8px}
+header p{margin:0;color:#dceaff}
+.search{display:block;width:min(600px,94%);margin:20px auto;padding:14px;border:0;border-radius:12px;font-size:16px}
+nav{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px}
+nav button,.action{border:0;background:#1769d2;color:white;padding:11px 16px;border-radius:9px;cursor:pointer}
+nav button{background:white;color:#1769d2;border:1px solid #dce4ef}
+main{max-width:1100px;margin:auto;padding:15px}
+h2{font-size:23px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:13px}
+.card{background:white;padding:18px 12px;border-radius:14px;text-align:center;box-shadow:0 3px 12px #1720330d;cursor:pointer;border:1px solid #e8edf5}
+.card:hover{border-color:#1769d2;transform:translateY(-2px)}
+.card .emoji{font-size:30px}
+.card h3{font-size:15px;margin:9px 0 0}
+.panel{display:none;background:white;padding:20px;border-radius:15px;margin:20px 0;box-shadow:0 3px 15px #17203312}
+.panel.active{display:block}
+.panel input,.panel textarea,.panel select{display:block;width:100%;padding:12px;margin:10px 0;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
+.panel button{margin:7px 5px 7px 0}
+.result{padding:12px;background:#eaf3ff;border-radius:9px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+footer{text-align:center;padding:25px;color:#667085}
+small{color:#667085}
+img.preview{max-width:100%;max-height:250px;display:block;margin:12px auto}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">Kaam<span>Easy</span></div>
-<nav>
-<a href="#home">Home</a>
-<a href="#tools">Tools</a>
-<a href="#about">About</a>
-</nav>
+<h1>⚡ KaamEasy</h1>
+<p>Free Online Tools – Har Digital Kaam Aasaan</p>
 </header>
-
-<section class="hero" id="home">
-<h1>Make Your Digital Work <span>Easy</span></h1>
-<p>Free online tools to make everyday digital tasks simple and easy.</p>
-<input class="search" id="search" placeholder="Search your favourite tool...">
+<input class="search" id="search" placeholder="🔍 Search tools..." oninput="filterTools()">
+<nav>
+<button onclick="showHome()">🏠 Home</button>
+<button onclick="filterCategory('Image')">🖼️ Image</button>
+<button onclick="filterCategory('PDF')">📄 PDF</button>
+<button onclick="filterCategory('Calculator')">🧮 Calculator</button>
+<button onclick="filterCategory('Other')">🛠️ Other</button>
+</nav>
+<main>
+<section id="home">
+<h2>✨ All Free Tools</h2>
+<div class="grid" id="toolGrid"></div>
 </section>
-
-<section class="container" id="tools">
-<h2>Our Free Online Tools</h2>
-<p class="sub">Simple, fast and free tools for everyone.</p>
-
-<div class="tools" id="toolList">
-<div class="tool"><div class="icon">📸</div><h3>Photo Resizer</h3><p>Resize your photos easily.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">🖼️</div><h3>Image Compressor</h3><p>Reduce image file size.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">📄</div><h3>PDF Compressor</h3><p>Compress PDF documents.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">📚</div><h3>PDF Merger</h3><p>Combine multiple PDF files.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">📝</div><h3>PDF to JPG</h3><p>Convert PDF pages into images.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">🔢</div><h3>Percentage Calculator</h3><p>Calculate percentages quickly.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">🎂</div><h3>Age Calculator</h3><p>Calculate your age easily.</p><a href="#">Explore Tool →</a></div>
-<div class="tool"><div class="icon">✍️</div><h3>Word Counter</h3><p>Count words and characters.</p><a href="#">Explore Tool →</a></div>
-</div>
+<section class="panel" id="panel">
+<button class="action" onclick="showHome()">← Back to Tools</button>
+<h2 id="toolTitle">Tool</h2>
+<div id="toolContent"></div>
 </section>
-
-<section class="container" id="about">
-<h2>About KaamEasy</h2>
-<p class="sub">Our mission is to make everyday digital tasks easier with free and simple online tools.</p>
-</section>
-
+</main>
 <footer>
-<div class="logo">KaamEasy</div>
-<p>Free online tools for everyone.</p>
-<p>© 2026 KaamEasy. All rights reserved.</p>
+<strong>KaamEasy</strong><br>
+Free tools for everyone.<br>
+<small>Fast • Simple • Free</small>
 </footer>
-
 <script>
-document.getElementById('search').addEventListener('input',function(){
-let q=this.value.toLowerCase();
-document.querySelectorAll('.tool').forEach(function(card){
-card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none';
-});
-});
+const tools=[
+["Photo Resizer","🖼️","Image","resize"],
+["Image Compressor","📦","Image","compress"],
+["JPG to PNG","🔄","Image","jpgpng"],
+["PNG to JPG","🔄","Image","pngjpg"],
+["PDF Merger","📑","PDF","merge"],
+["Image to PDF","📄","PDF","imgpdf"],
+["Age Calculator","🎂","Calculator","age"],
+["Percentage Calculator","％","Calculator","percent"],
+["GST Calculator","₹","Calculator","gst"],
+["EMI Calculator","🏦","Calculator","emi"],
+["Word Counter","📝","Other","words"],
+["QR Code Generator","▦","Other","qr"],
+["Password Generator","🔐","Other","password"],
+["Unit Converter","📏","Other","unit"],
+["Stopwatch","⏱️","Other","stopwatch"],
+["Timer","⏰","Other","timer"]
+];
+const grid=document.getElementById("toolGrid");
+function render(list=tools){
+grid.innerHTML=list.map(t=>`<div class="card" onclick="openTool('${t[3]}')"><div class="emoji">${t[1]}</div><h3>${t[0]}</h3></div>`).join("");
+}
+render();
+function filterTools(){
+let q=document.getElementById("search").value.toLowerCase();
+render(tools.filter(t=>t[0].toLowerCase().includes(q)));
+}
+function filterCategory(c){render(tools.filter(t=>t[2]===c));document.getElementById("home").scrollIntoView()}
+function showHome(){
+document.getElementById("panel").classList.remove("active");
+document.getElementById("home").style.display="block";
+document.getElementById("search").value="";
+render();
+}
+function openTool(id){
+document.getElementById("home").style.display="none";
+let p=document.getElementById("panel");p.classList.add("active");
+let t=tools.find(x=>x[3]===id);
+document.getElementById("toolTitle").textContent=t[1]+" "+t[0];
+document.getElementById("toolContent").innerHTML=views[id];
+p.scrollIntoView({behavior:"smooth"});
+}
+const views={
+resize:`<p>Select an image and enter new dimensions.</p><input type="file" id="file" accept="image/*"><input id="w" type="number" placeholder="Width in pixels"><input id="h" type="number" placeholder="Height in pixels"><button class="action" onclick="processImage('resize')">Resize Image</button><div id="out"></div>`,
+compress:`<p>Reduce image file size by adjusting quality.</p><input type="file" id="file" accept="image/*"><label>Quality (0.1 to 1)</label><input id="quality" type="number" min=".1" max="1" step=".1" value=".7"><button class="action" onclick="processImage('compress')">Compress Image</button><div id="out"></div>`,
+jpgpng:`<p>Convert JPG/JPEG image to PNG.</p><input type="file" id="file" accept="image/jpeg"><button class="action" onclick="processImage('jpgpng')">Convert to PNG</button><div id="out"></div>`,
+pngjpg:`<p>Convert PNG image to JPG.</p><input type="file" id="file" accept="image/png"><button class="action" onclick="processImage('pngjpg')">Convert to JPG</button><div id="out"></div>`,
+merge:`<p>Select two or more PDF files.</p><input type="file" id="pdfs" accept="application/pdf" multiple><button class="action" onclick="mergePDF()">Merge PDFs</button><div id="out"></div>`,
+imgpdf:`<p>Select images to create one PDF.</p><input type="file" id="images" accept="image/*" multiple><button class="action" onclick="imagesPDF()">Create PDF</button><div id="out"></div>`,
+age:`<p>Enter your date of birth.</p><input type="date" id="dob"><button class="action" onclick="calcAge()">Calculate Age</button><div id="out" class="result"></div>`,
+percent:`<p>Find percentage of a number.</p><input id="p1" type="number" placeholder="Percentage (%)"><input id="p2" type="number" placeholder="Number"><button class="action" onclick="result('Percentage = '+(num('p1')*num('p2')/100))">Calculate</button><div id="out" class="result"></div>`,
+gst:`<p>Calculate GST amount.</p><input id="amount" type="number" placeholder="Amount (₹)"><input id="rate" type="number" placeholder="GST rate (%) e.g. 18"><select id="gstmode"><option value="add">Add GST</option><option value="remove">Remove GST</option></select><button class="action" onclick="gstCalc()">Calculate GST</button><div id="out" class="result"></div>`,
+emi:`<p>Calculate your monthly loan EMI.</p><input id="principal" type="number" placeholder="Loan amount (₹)"><input id="interest" type="number" placeholder="Annual interest rate (%)"><input id="months" type="number" placeholder="Duration in months"><button class="action" onclick="emiCalc()">Calculate EMI</button><div id="out" class="result"></div>`,
+words:`<p>Type or paste your text below.</p><textarea id="text" rows="8" placeholder="Enter your text..." oninput="countWords()"></textarea><div id="out" class="result">Words: 0 | Characters: 0</div>`,
+qr:`<p>Enter text or a website URL.</p><input id="qrtext" placeholder="Enter text or URL"><button class="action" onclick="makeQR()">Generate QR Code</button><div id="qrcode"></div>`,
+password:`<p>Choose password length.</p><input id="plen" type="number" value="16" min="4" max="64"><label><input type="checkbox" id="symbols" checked> Include symbols</label><button class="action" onclick="makePassword()">Generate Password</button><div id="out" class="result"></div>`,
+unit:`<p>Convert common units.</p><input id="unitval" type="number" placeholder="Enter value"><select id="unitfrom"><option value="km">Kilometers</option><option value="m">Meters</option><option value="cm">Centimeters</option><option value="kg">Kilograms</option><option value="g">Grams</option><option value="mile">Miles</option><option value="ft">Feet</option></select><select id="unitto"><option value="m">Meters</option><option value="km">Kilometers</option><option value="cm">Centimeters</option><option value="g">Grams</option><option value="kg">Kilograms</option><option value="mile">Miles</option><option value="ft">Feet</option></select><button class="action" onclick="convertUnit()">Convert</button><div id="out" class="result"></div>`,
+stopwatch:`<h3 id="clock">00:00:00</h3><button class="action" onclick="startWatch()">Start</button><button class="action" onclick="stopWatch()">Stop</button><button class="action" onclick="resetWatch()">Reset</button>`,
+timer:`<p>Set timer duration.</p><input id="seconds" type="number" placeholder="Seconds" value="60"><h3 id="timerDisplay">01:00</h3><button class="action" onclick="startTimer()">Start Timer</button><button class="action" onclick="stopTimer()">Stop</button><button class="action" onclick="resetTimer()">Reset</button>`
+};
+function num(id){return Number(document.getElementById(id).value)||0}
+function result(s){document.getElementById("out").textContent=s}
+function processImage(mode){
+let f=document.getElementById("file").files[0];if(!f)return alert("Please select an image.");
+let url=URL.createObjectURL(f),img=new Image();
+img.onload=()=>{
+let c=document.createElement("canvas");
+let w=mode==="resize"?(num("w")||img.width):img.width;
+let h=mode==="resize"?(num("h")||img.height):img.height;
+c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
+let type=mode==="jpgpng"?"image/png":mode==="pngjpg"?"image/jpeg":f.type;
+let quality=mode==="compress"?Math.min(1,Math.max(.1,num("quality"))):.92;
+c.toBlob(blob=>{
+let a=document.createElement("a"),u=URL.createObjectURL(blob);
+a.href=u;a.download="kaameasy-image."+(type==="image/png"?"png":"jpg");a.textContent="Download Image";
+let out=document.getElementById("out");out.innerHTML="";out.append(a);
+let preview=document.createElement("img");preview.src=u;preview.className="preview";out.append(preview);
+},type,quality);
+};img.src=url;
+}
+async function mergePDF(){
+let files=document.getElementById("pdfs").files;if(files.length<2)return alert("Select at least two PDFs.");
+try{let merged=await PDFLib.PDFDocument.create();for(let f of files){let pdf=await PDFLib.PDFDocument.load(await f.arrayBuffer());let pages=await merged.copyPages(pdf,pdf.getPageIndices());pages.forEach(p=>merged.addPage(p));}
+let bytes=await merged.save();downloadBlob(new Blob([bytes],{type:"application/pdf"}),"merged.pdf");result("PDF merged. Download started.");
+}catch(e){result("Could not merge PDFs. Check your files.");}
+}
+async function imagesPDF(){
+let files=document.getElementById("images").files;if(!files.length)return alert("Select images.");
+let {jsPDF}=window.jspdf;let pdf=new jsPDF();
+for(let i=0;i<files.length;i++){let data=await new Promise(resolve=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(files[i]);});let img=new Image();await new Promise(resolve=>{img.onload=resolve;img.src=data});if(i)pdf.addPage();let pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight(),scale=Math.min(pw/img.width,ph/img.height);pdf.addImage(data,"JPEG",(pw-img.width*scale)/2,(ph-img.height*scale)/2,img.width*scale,img.height*scale);}
+pdf.save("kaameasy-images.pdf");result("Your PDF has been created.");
+}
+function downloadBlob(blob,name){let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function calcAge(){let d=new Date(document.getElementById("dob").value);if(!document.getElementById("dob").value||d>new Date())return result("Enter a valid date of birth.");let n=new Date();let y=n.getFullYear()-d.getFullYear(),m=n.getMonth()-d.getMonth(),day=n.getDate()-d.getDate();if(day<0){m--;day+=new Date(n.getFullYear(),n.getMonth(),0).getDate()}if(m<0){y--;m+=12}result(`Your age is ${y} years, ${m} months and ${day} days.`)}
+function gstCalc(){let a=num("amount"),r=num("rate"),v=num("gstmode")==0?0:0;let mode=document.getElementById("gstmode").value;let gst=mode==="add"?a*r/100:a-a/(1+r/100);result(`GST Amount: ₹${gst.toFixed(2)}\n${mode==="add"?"Total with GST":"Amount before GST"}: ₹${(mode==="add"?a+gst:a-gst).toFixed(2)}`)}
+function emiCalc(){let p=num("principal"),r=num("interest")/1200,n=num("months");if(!p||!n)return result("Enter valid loan details.");let e=r===0?p/n:p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);result(`Monthly EMI: ₹${e.toFixed(2)}\nTotal payment: ₹${(e*n).toFixed(2)}\nTotal interest: ₹${(e*n-p).toFixed(2)}`)}
+function countWords(){let s=document.getElementById("text").value;result(`Words: ${(s.trim().match(/\S+/g)||[]).length}\nCharacters: ${s.length}\nCharacters (without spaces): ${s.replace(/\s/g,"").length}`)}
+function makeQR(){let s=document.getElementById("qrtext").value;if(!s)return alert("Enter text first.");let q=document.getElementById("qrcode");q.innerHTML="";new QRCode(q,{text:s,width:200,height:200});}
+function makePassword(){let len=Math.min(64,Math.max(4,num("plen"))),chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"+(document.getElementById("symbols").checked?"!@#$%&*_-?":"");let s="";let a=new Uint32Array(len);crypto.getRandomValues(a);for(let x of a)s+=chars[x%chars.length];result(s); }
+const factors={km:1000,m:1,cm:.01,kg:1,g:.001,mile:1609.344,ft:.3048};
+function convertUnit(){let a=num("unitval"),f=document.getElementById("unitfrom").value,t=document.getElementById("unitto").value;let mass=["kg","g"];if(mass.includes(f)!==mass.includes(t))return result("Choose units of the same type.");result(`${a} ${f} = ${(a*factors[f]/factors[t]).toFixed(6)} ${t}`)}
+let watchInterval=null,watchStart=0,watchElapsed=0,timerInterval=null,timerLeft=60;
+function fmt(s){return String(s).padStart(2,"0")}
+function showWatch(){let t=Math.floor((watchElapsed+Date.now()-watchStart)/1000);document.getElementById("clock").textContent=fmt(Math.floor(t/3600))+":"+fmt(Math.floor(t%3600/60))+":"+fmt(t%60)}
+function startWatch(){if(watchInterval)return;watchStart=Date.now();watchInterval=setInterval(showWatch,250)}
+function stopWatch(){if(watchInterval){watchElapsed+=Date.now()-watchStart;clearInterval(watchInterval);watchInterval=null}}
+function resetWatch(){stopWatch();watchElapsed=0;document.getElementById("clock").textContent="00:00:00"}
+function showTimer(){document.getElementById("timerDisplay").textContent=fmt(Math.floor(timerLeft/60))+":"+fmt(timerLeft%60)}
+function startTimer(){if(timerInterval)return;if(timerLeft<=0)timerLeft=num("seconds");if(timerLeft<=0)return;timerInterval=setInterval(()=>{timerLeft--;showTimer();if(timerLeft<=0){stopTimer();alert("Timer finished!");}},1000)}
+function stopTimer(){clearInterval(timerInterval);timerInterval=null}
+function resetTimer(){stopTimer();timerLeft=num("seconds");showTimer()}
 </script>
 </body>
 </html>
